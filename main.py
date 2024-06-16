@@ -1,12 +1,15 @@
 import random
 
+# Constants for the slot machine
 MAX_LINES = 3
 MAX_BET = 100
 MIN_BET = 1
 
+# Slot machine dimensions
 ROWS = 3
 COLS = 3
 
+# Symbols and their corresponding counts and values
 symbol_count = {
     "A": 2,
     "B": 4,
@@ -21,8 +24,9 @@ symbol_value = {
 }
 
 def check_winnings(columns, lines, bet, values):
+    # Calculate the winnings from the slot machine spin
     winnings = 0
-    winnings_lines = []
+    winning_lines = []
     for line in range(lines):
         symbol = columns[0][line]
         for column in columns:
@@ -31,14 +35,12 @@ def check_winnings(columns, lines, bet, values):
                 break
         else:
             winnings += values[symbol] * bet
-            winnings_lines.append(line + 1)
+            winning_lines.append(line + 1)
             
-    return winnings, winnings_lines
+    return winnings, winning_lines
             
-    
-    
-
 def get_slot_machine_spin(rows, cols, symbols):
+    # Generate a spin for the slot machine
     all_symbols = []
     for symbol, symbol_count in symbols.items():
         for _ in range(symbol_count):
@@ -47,7 +49,7 @@ def get_slot_machine_spin(rows, cols, symbols):
     columns = []
     for _ in range(cols):
         column = []
-        current_symbols = all_symbols[:] #making a copy of the list
+        current_symbols = all_symbols[:]  # Making a copy of the list
         for _ in range(rows):
             value = random.choice(current_symbols)
             current_symbols.remove(value)
@@ -57,8 +59,8 @@ def get_slot_machine_spin(rows, cols, symbols):
         
     return columns
 
-
 def print_slot_machine(columns):
+    # Print the slot machine columns in a readable format
     for row in range(len(columns[0])):
         for i, column in enumerate(columns):
             if i != len(columns) - 1:
@@ -66,16 +68,11 @@ def print_slot_machine(columns):
             else:
                 print(column[row], end="")
         print()
-    
-            
-    
-
-
 
 def deposit():
+    # Prompt the user to deposit money and ensure it's a valid positive number
     while True:
         amount = input("What would you like to deposit? $")
-        #check if the amount is a number
         if amount.isdigit():
             amount = int(amount)
             if amount > 0:
@@ -87,25 +84,25 @@ def deposit():
             
     return amount
 
-def get_numebr_of_lines():
+def get_number_of_lines():
+    # Prompt the user to enter the number of lines to bet on
     while True:
-        lines = input("Enter the number of lines to bet on (1-"+ str(MAX_LINES)+ ")? ")
-        #check if the amount is a number
+        lines = input("Enter the number of lines to bet on (1-" + str(MAX_LINES) + "): ")
         if lines.isdigit():
             lines = int(lines)
             if 1 <= lines <= MAX_LINES:
                 break
             else:
-                print("Enter a valid number of lines")
+                print("Enter a valid number of lines.")
         else:
             print("Please enter a number.")
             
     return lines
-    
+
 def get_bet():
+    # Prompt the user to enter their bet amount per line
     while True:
         amount = input("What would you like to bet on each line? $")
-        #check if the amount is a number
         if amount.isdigit():
             amount = int(amount)
             if MIN_BET <= amount <= MAX_BET:
@@ -116,19 +113,20 @@ def get_bet():
             print("Please enter a number.")
             
     return amount
-    
+
 def spin(balance):
-    lines = get_numebr_of_lines()
+    # Perform a spin of the slot machine and update the balance based on the outcome
+    lines = get_number_of_lines()
     while True:
         bet = get_bet()   
         total_bet = bet * lines
         
         if total_bet > balance:
-            print(f"You do not have enough to be tthat amount, your current balance is: ${balance}")
+            print(f"You do not have enough to bet that amount, your current balance is: ${balance}")
         else:
             break
         
-    print(f"You are betting ${bet} on ${lines} lines. Total bet is equal to: ${total_bet}")
+    print(f"You are betting ${bet} on {lines} lines. Total bet is equal to: ${total_bet}")
     
     slots = get_slot_machine_spin(ROWS, COLS, symbol_count)
     print_slot_machine(slots)
@@ -138,16 +136,15 @@ def spin(balance):
     return winnings - total_bet
 
 def main():
+    # Main function to run the slot machine game
     balance = deposit()
     while True:
         print(f"Current balance is: ${balance}")
-        answer = input("Press enter to play. {q to quit}. ")
+        answer = input("Press enter to play (q to quit). ")
         if answer == "q":
             break
         balance += spin(balance)
     print(f"You left with ${balance}")
 
-    
-
-    
+# Start the game
 main()
